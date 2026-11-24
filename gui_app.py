@@ -67,6 +67,7 @@ class CoffeeGuideWindow(tk.Tk):
         self.build_form_panel()
         self.build_button_panel()
         self.build_filter_bar()
+        self.build_find_spot_panel()
         self.build_table()
         self.build_status_label()
 
@@ -170,12 +171,50 @@ class CoffeeGuideWindow(tk.Tk):
         self.show_all_button = ttk.Button(filter_frame, text='Show All', command=self.show_all)
         self.show_all_button.grid(row=0, column=5, padx=5, pady=5)
 
+    # build the Find My Spot Now panel
+    def build_find_spot_panel(self):
+        # the frame that holds the panel
+        spot_frame = ttk.LabelFrame(self, text='Find My Spot Now')
+        spot_frame.grid(row=3, column=0, padx=10, pady=5, sticky='ew')
+
+        # late night dropdown
+        ttk.Label(spot_frame, text='Late Night:').grid(row=0, column=0, padx=5, pady=5)
+        self.spot_late_combo = ttk.Combobox(
+            spot_frame, values=['Any', 'Yes'], state='readonly', width=8
+        )
+        self.spot_late_combo.set('Any')
+        self.spot_late_combo.grid(row=0, column=1, padx=5, pady=5)
+
+        # vibe dropdown
+        ttk.Label(spot_frame, text='Vibe:').grid(row=0, column=2, padx=5, pady=5)
+        self.spot_vibe_combo = ttk.Combobox(
+            spot_frame, values=['Any'] + VIBES, state='readonly', width=16
+        )
+        self.spot_vibe_combo.set('Any')
+        self.spot_vibe_combo.grid(row=0, column=3, padx=5, pady=5)
+
+        # coffee style dropdown
+        ttk.Label(spot_frame, text='Coffee Style:').grid(row=0, column=4, padx=5, pady=5)
+        self.spot_style_combo = ttk.Combobox(
+            spot_frame, values=['Any'] + STYLES, state='readonly', width=18
+        )
+        self.spot_style_combo.set('Any')
+        self.spot_style_combo.grid(row=0, column=5, padx=5, pady=5)
+
+        # find spot button
+        self.find_spot_button = ttk.Button(spot_frame, text='Find My Spot Now', command=self.find_spot_now)
+        self.find_spot_button.grid(row=0, column=6, padx=5, pady=5)
+
+        # reset button
+        self.reset_spot_button = ttk.Button(spot_frame, text='Reset', command=self.reset_spot)
+        self.reset_spot_button.grid(row=0, column=7, padx=5, pady=5)
+
     # build the table with a scrollbar
     def build_table(self):
         # the frame that holds the table
         table_frame = ttk.Frame(self)
-        table_frame.grid(row=3, column=0, padx=10, pady=5, sticky='nsew')
-        self.rowconfigure(3, weight=1)
+        table_frame.grid(row=4, column=0, padx=10, pady=5, sticky='nsew')
+        self.rowconfigure(4, weight=1)
         self.columnconfigure(0, weight=1)
 
         # the table columns
@@ -207,7 +246,7 @@ class CoffeeGuideWindow(tk.Tk):
     def build_status_label(self):
         # label that shows success and error messages
         self.status_label = ttk.Label(self, text='Ready.')
-        self.status_label.grid(row=4, column=0, padx=10, pady=10, sticky='w')
+        self.status_label.grid(row=5, column=0, padx=10, pady=10, sticky='w')
 
     # show a message in the status label
     def show_status(self, message, is_error=False):
@@ -279,12 +318,23 @@ class CoffeeGuideWindow(tk.Tk):
             self.show_status(error_message, True)
             return
 
+        # show the shops in the table
+        self.fill_table(data['shops'])
+
+        # show the result
+        if len(data['shops']) == 0:
+            self.show_status('No coffee shops found.')
+        else:
+            self.show_status('Loaded ' + str(len(data['shops'])) + ' coffee shop(s).')
+
+    # put a list of shops into the table
+    def fill_table(self, shops):
         # remove the old rows
         for row_id in self.shops_table.get_children():
             self.shops_table.delete(row_id)
 
         # add the new rows
-        for shop in data['shops']:
+        for shop in shops:
             self.shops_table.insert('', tk.END, iid=str(shop['id']), values=(
                 shop['id'],
                 shop['name'],
@@ -299,11 +349,40 @@ class CoffeeGuideWindow(tk.Tk):
         # the selected row no longer exists
         self.selected_shop_id = None
 
-        # show the result
-        if len(data['shops']) == 0:
-            self.show_status('No coffee shops found.')
+    # find matching spots with the extra feature
+    def find_spot_now(self):
+        # build the query string from the panel
+        values = {
+            'open_late': self.spot_late_combo.get(),
+            'seating_vibe': self.spot_vibe_combo.get(),
+            'coffee_style': self.spot_style_combo.get(),
+        }
+        path = '/shops/find_spot?' + urlencode(values)
+
+        # ask the server for matching spots
+        data, error_message = send_request(path)
+        if error_message is not None:
+            self.show_status(error_message, True)
+            return
+
+        # show the matches in the table
+        self.fill_table(data['shops'])
+
+        # show the count
+        if data['count'] == 0:
+            self.show_status('No matching spots found. Try different choices.')
         else:
-            self.show_status('Loaded ' + str(len(data['shops'])) + ' coffee shop(s).')
+            self.show_status('Found ' + str(data['count']) + ' matching spot(s).')
+
+    # reset the panel and show every shop
+    def reset_spot(self):
+        # reset the panel dropdowns
+        self.spot_late_combo.set('Any')
+        self.spot_vibe_combo.set('Any')
+        self.spot_style_combo.set('Any')
+
+        # reset the filters and reload the list
+        self.show_all()
 
     # fill the form from the selected row
     def on_row_selected(self, event):
