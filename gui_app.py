@@ -18,6 +18,14 @@ VIBES = ['Quiet Study', 'Social Hangout', 'Family Seating', 'Drive-Thru']
 OPEN_LATE_CHOICES = ['Yes', 'No']
 MIN_RATING_CHOICES = ['All', '1', '2', '3', '4', '5']
 
+# theme colors and font
+CREAM = '#FAF6F0'
+CREAM_LIGHT = '#FFFFFF'
+CREAM_ROW = '#F3EBDD'
+ESPRESSO = '#4A2C2A'
+ESPRESSO_LIGHT = '#6B4440'
+FONT_NAME = 'Segoe UI'
+
 
 # send one request to the server and return (data, error_message)
 def send_request(path, form_data=None):
@@ -63,7 +71,11 @@ class CoffeeGuideWindow(tk.Tk):
         # id of the shop selected in the table
         self.selected_shop_id = None
 
+        # colors and fonts first, then the widgets
+        self.apply_theme()
+
         # build every section of the window
+        self.build_banner()
         self.build_form_panel()
         self.build_button_panel()
         self.build_filter_bar()
@@ -74,11 +86,67 @@ class CoffeeGuideWindow(tk.Tk):
         # load the shops from the server
         self.refresh_shops()
 
+    # set the cream and espresso colors with ttk styles
+    def apply_theme(self):
+        # start from the clam theme and color the window
+        style = ttk.Style()
+        style.theme_use('clam')
+        self.configure(background=CREAM)
+
+        # frames and labels
+        style.configure('TFrame', background=CREAM)
+        style.configure('TLabel', background=CREAM, foreground=ESPRESSO, font=(FONT_NAME, 10))
+        style.configure('TLabelframe', background=CREAM, bordercolor=ESPRESSO_LIGHT)
+        style.configure(
+            'TLabelframe.Label', background=CREAM, foreground=ESPRESSO, font=(FONT_NAME, 10, 'bold')
+        )
+
+        # banner at the top
+        style.configure(
+            'Banner.TLabel', background=ESPRESSO, foreground=CREAM, font=(FONT_NAME, 13, 'bold')
+        )
+
+        # normal buttons
+        style.configure(
+            'TButton', background=CREAM_ROW, foreground=ESPRESSO, font=(FONT_NAME, 10), padding=4
+        )
+        style.map('TButton', background=[('active', '#E6D9C3')])
+
+        # accent buttons for Add Shop and Find My Spot Now
+        style.configure(
+            'Accent.TButton', background=ESPRESSO, foreground=CREAM, font=(FONT_NAME, 10, 'bold'), padding=4
+        )
+        style.map('Accent.TButton', background=[('active', ESPRESSO_LIGHT)])
+
+        # entry boxes and dropdowns
+        style.configure('TEntry', fieldbackground=CREAM_LIGHT, foreground=ESPRESSO)
+        style.configure('TCombobox', fieldbackground=CREAM_LIGHT, foreground=ESPRESSO)
+
+        # table and its headings
+        style.configure(
+            'Treeview', background=CREAM_LIGHT, fieldbackground=CREAM_LIGHT,
+            foreground=ESPRESSO, font=(FONT_NAME, 10), rowheight=24
+        )
+        style.map('Treeview', background=[('selected', ESPRESSO)], foreground=[('selected', CREAM)])
+        style.configure(
+            'Treeview.Heading', background=ESPRESSO, foreground=CREAM, font=(FONT_NAME, 10, 'bold')
+        )
+        style.map('Treeview.Heading', background=[('active', ESPRESSO_LIGHT)])
+
+    # build the compact title banner
+    def build_banner(self):
+        # one label across the top of the window
+        self.banner_label = ttk.Label(
+            self, text='Saudi Coffee Shop Guide \u2014 Late-Night & Vibe Finder',
+            style='Banner.TLabel', anchor='center'
+        )
+        self.banner_label.grid(row=0, column=0, sticky='ew', ipady=6)
+
     # build the form panel
     def build_form_panel(self):
         # the frame that holds the form
         form_frame = ttk.LabelFrame(self, text='Coffee Shop Details')
-        form_frame.grid(row=0, column=0, padx=10, pady=10, sticky='ew')
+        form_frame.grid(row=1, column=0, padx=10, pady=10, sticky='ew')
 
         # name field
         ttk.Label(form_frame, text='Name:').grid(row=0, column=0, padx=5, pady=5, sticky='w')
@@ -119,10 +187,12 @@ class CoffeeGuideWindow(tk.Tk):
     def build_button_panel(self):
         # the frame that holds the buttons
         button_frame = ttk.Frame(self)
-        button_frame.grid(row=1, column=0, padx=10, pady=5, sticky='w')
+        button_frame.grid(row=2, column=0, padx=10, pady=5, sticky='w')
 
         # add button
-        self.add_button = ttk.Button(button_frame, text='Add Shop', command=self.add_shop)
+        self.add_button = ttk.Button(
+            button_frame, text='Add Shop', style='Accent.TButton', command=self.add_shop
+        )
         self.add_button.grid(row=0, column=0, padx=5, pady=5)
 
         # edit button
@@ -145,7 +215,7 @@ class CoffeeGuideWindow(tk.Tk):
     def build_filter_bar(self):
         # the frame that holds the filters
         filter_frame = ttk.LabelFrame(self, text='Filter')
-        filter_frame.grid(row=2, column=0, padx=10, pady=5, sticky='ew')
+        filter_frame.grid(row=3, column=0, padx=10, pady=5, sticky='ew')
 
         # region filter
         ttk.Label(filter_frame, text='Region:').grid(row=0, column=0, padx=5, pady=5)
@@ -175,7 +245,7 @@ class CoffeeGuideWindow(tk.Tk):
     def build_find_spot_panel(self):
         # the frame that holds the panel
         spot_frame = ttk.LabelFrame(self, text='Find My Spot Now')
-        spot_frame.grid(row=3, column=0, padx=10, pady=5, sticky='ew')
+        spot_frame.grid(row=4, column=0, padx=10, pady=5, sticky='ew')
 
         # late night dropdown
         ttk.Label(spot_frame, text='Late Night:').grid(row=0, column=0, padx=5, pady=5)
@@ -202,7 +272,9 @@ class CoffeeGuideWindow(tk.Tk):
         self.spot_style_combo.grid(row=0, column=5, padx=5, pady=5)
 
         # find spot button
-        self.find_spot_button = ttk.Button(spot_frame, text='Find My Spot Now', command=self.find_spot_now)
+        self.find_spot_button = ttk.Button(
+            spot_frame, text='Find My Spot Now', style='Accent.TButton', command=self.find_spot_now
+        )
         self.find_spot_button.grid(row=0, column=6, padx=5, pady=5)
 
         # reset button
@@ -213,8 +285,8 @@ class CoffeeGuideWindow(tk.Tk):
     def build_table(self):
         # the frame that holds the table
         table_frame = ttk.Frame(self)
-        table_frame.grid(row=4, column=0, padx=10, pady=5, sticky='nsew')
-        self.rowconfigure(4, weight=1)
+        table_frame.grid(row=5, column=0, padx=10, pady=5, sticky='nsew')
+        self.rowconfigure(5, weight=1)
         self.columnconfigure(0, weight=1)
 
         # the table columns
@@ -239,6 +311,10 @@ class CoffeeGuideWindow(tk.Tk):
         table_frame.rowconfigure(0, weight=1)
         table_frame.columnconfigure(0, weight=1)
 
+        # alternating row colors
+        self.shops_table.tag_configure('even_row', background=CREAM_LIGHT)
+        self.shops_table.tag_configure('odd_row', background=CREAM_ROW)
+
         # fill the form when a row is selected
         self.shops_table.bind('<<TreeviewSelect>>', self.on_row_selected)
 
@@ -246,7 +322,7 @@ class CoffeeGuideWindow(tk.Tk):
     def build_status_label(self):
         # label that shows success and error messages
         self.status_label = ttk.Label(self, text='Ready.')
-        self.status_label.grid(row=5, column=0, padx=10, pady=10, sticky='w')
+        self.status_label.grid(row=6, column=0, padx=10, pady=10, sticky='w')
 
     # show a message in the status label
     def show_status(self, message, is_error=False):
@@ -335,9 +411,16 @@ class CoffeeGuideWindow(tk.Tk):
             self.shops_table.delete(row_id)
 
         # add the new rows
+        row_number = 0
         for shop in shops:
+            # pick the even or odd row color tag
+            row_tag = 'odd_row'
+            if row_number % 2 == 0:
+                row_tag = 'even_row'
+            row_number = row_number + 1
+
             # insert one shop as a table row
-            self.shops_table.insert('', tk.END, iid=str(shop['id']), values=(
+            self.shops_table.insert('', tk.END, iid=str(shop['id']), tags=(row_tag,), values=(
                 shop['id'],
                 shop['name'],
                 shop['region'],
