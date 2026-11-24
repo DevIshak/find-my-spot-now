@@ -331,10 +331,12 @@ class CoffeeGuideWindow(tk.Tk):
     def fill_table(self, shops):
         # remove the old rows
         for row_id in self.shops_table.get_children():
+            # delete one old row
             self.shops_table.delete(row_id)
 
         # add the new rows
         for shop in shops:
+            # insert one shop as a table row
             self.shops_table.insert('', tk.END, iid=str(shop['id']), values=(
                 shop['id'],
                 shop['name'],
@@ -409,6 +411,19 @@ class CoffeeGuideWindow(tk.Tk):
         self.vibe_combo.set(values[5])
         self.open_late_combo.set(values[6])
 
+    # show an error and reload the list if the shop no longer exists
+    def show_error_and_reload(self, error_message, title):
+        # show the error to the user
+        messagebox.showerror(title, error_message)
+
+        # remove the stale row when the server says 404 not found
+        if error_message.startswith('Server error 404'):
+            self.clear_form()
+            self.refresh_shops()
+
+        # keep the error visible in the status label
+        self.show_status(error_message, True)
+
     # add a new shop
     def add_shop(self):
         # send the form to the server
@@ -437,8 +452,7 @@ class CoffeeGuideWindow(tk.Tk):
         form_data['id'] = str(self.selected_shop_id)
         data, error_message = send_request('/shops/edit', form_data)
         if error_message is not None:
-            self.show_status(error_message, True)
-            messagebox.showerror('Update Failed', error_message)
+            self.show_error_and_reload(error_message, 'Update Failed')
             return
 
         # refresh the list and report success
@@ -454,10 +468,17 @@ class CoffeeGuideWindow(tk.Tk):
             messagebox.showwarning('No Selection', 'Please select a coffee shop first.')
             return
 
-        # ask the user to confirm
-        # read the shop name from the table row, not the typed box
+        # a table row must still be selected
         selected_row = self.shops_table.selection()
+        if not selected_row:
+            self.show_status('Please select a coffee shop first.', True)
+            messagebox.showwarning('No Selection', 'Please select a coffee shop first.')
+            return
+
+        # read the shop name from the table row, not the typed box
         shop_name = self.shops_table.item(selected_row[0], 'values')[1]
+
+        # ask the user to confirm
         answer = messagebox.askyesno('Confirm Delete', 'Delete "' + shop_name + '"?')
         if not answer:
             return
@@ -466,8 +487,7 @@ class CoffeeGuideWindow(tk.Tk):
         form_data = {'id': str(self.selected_shop_id)}
         data, error_message = send_request('/shops/delete', form_data)
         if error_message is not None:
-            self.show_status(error_message, True)
-            messagebox.showerror('Delete Failed', error_message)
+            self.show_error_and_reload(error_message, 'Delete Failed')
             return
 
         # refresh the list and report success

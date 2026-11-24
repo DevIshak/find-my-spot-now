@@ -3,44 +3,42 @@
 ## 1. Completed Phases
 - [x] **Phase 1: Project Setup & SQLite Data Layer** — Complete & Verified
 - [x] **Phase 2: Flask Back-End API (`server.py`)** — Complete & Verified
-- [x] **Phase 3: Tkinter Core CRUD & Error Handling (`gui_app.py`)** — Complete & Verified (manual tests passed)
-- [x] **Phase 4: Extra Feature ("Find My Spot Now") & Threaded Report Helper** — Automated checks passed; user manual check pending
-- [ ] **Phase 5: End-to-End Rubric Audit & `README.md`** — Pending
+- [x] **Phase 3: Tkinter Core CRUD & Error Handling (`gui_app.py`)** — Complete & Verified
+- [x] **Phase 4: Extra Feature ("Find My Spot Now") & Threaded Report Helper** — Complete & Verified
+- [x] **Phase 5: End-to-End Rubric Audit & `README.md`** — Automated checks passed; awaiting user approval/commit
 - [ ] **Phase 6: Oral Defense Cheat Sheet, Slides Outline & Final Submission Check** — Pending
 
 ---
 
 ## 2. Files Created / Modified
 - `.gitignore` — Ignores `.venv/`, `__pycache__/`, `*.pyc`, `coffee_shops_report.txt`, `*.db`.
-- `requirements.txt` — Lists `Flask`.
-- `shop_store.py` — `ShopStore` class (parameterized sqlite3 CRUD, `filter_shops`, `find_spot_now`, `seed_sample_shops`, `close`).
-- `setup_db.py` — Creates table and seeds the 6 sample shops only when empty.
-- `server.py` — Flask JSON API on `127.0.0.1:5050`; fresh `ShopStore` per request closed in `finally:`; startup only creates the table (no seeding).
-- `tests/test_store.py` — 7 unit tests for `ShopStore`.
-- `tests/test_api.py` — 6 HTTP tests against a live server with a temp DB.
-- `gui_app.py` — Tkinter `CoffeeGuideWindow`; Phase 4 added the Find My Spot Now panel (`build_find_spot_panel`, `find_spot_now`, `reset_spot`, helper `fill_table`) calling `GET /shops/find_spot` and showing count + rows in `shops_table`.
-- `report_helper.py` — Fetches `GET /shops` (timeout=5; HTTPError, socket.timeout, URLError in order), starts one `threading.Thread` writing UTF-8 `coffee_shops_report.txt` with `with open(...)` and `except OSError`, `.join()`, then prints success/failure.
-- `PROGRESS_HANDOFF.md` — This tracker.
+- `requirements.txt` — `Flask`.
+- `shop_store.py` — `ShopStore` class (parameterized SQL, CRUD, filter, Find My Spot Now, seeding). Unchanged in Phase 5.
+- `setup_db.py` — Creates the table; seeds 6 shops only when empty. Unchanged in Phase 5.
+- `server.py` — Flask JSON API on 127.0.0.1:5050; fresh `ShopStore` per request closed in `finally:`; startup does not seed. Unchanged in Phase 5.
+- `gui_app.py` — **Phase 5 changes:** (1) `delete_shop()` now guards `if not selected_row:` with a warning instead of an IndexError; (2) new `show_error_and_reload()` used by edit/delete: on a 404 it clears the form and refreshes so the stale row disappears, then keeps the error in the status label; (3) added comments inside the two `fill_table` loops.
+- `report_helper.py` — Threaded UTF-8 report writer. Unchanged in Phase 5.
+- `tests/test_store.py`, `tests/test_api.py` — Unchanged.
+- `README.md` — **New:** overview, Find My Spot Now, file and route tables, exact setup commands, Course Topic Evidence Table (8 topics), recorded test results, credits + AI disclosure.
 
 ---
 
-## 3. Tests Passed
-- Phases 1-3 tests as before (setup_db x2, test_store 7 tests, test_api 6 tests, gui syntax + smoke, Phase 3 manual checklist by user): PASS.
-- Phase 4: `server.py` already had NO `seed_sample_shops()` call at startup (only `ShopStore(DB_PATH)` + `close()`); no change needed.
-- `python -m py_compile gui_app.py report_helper.py server.py`: PASS.
-- report_helper with Flask running: PASS — `Report SUCCESS: wrote 6 shops to coffee_shops_report.txt`; file verified (header, per-shop blocks, `Total coffee shops: 6`).
-- report_helper with Flask stopped: PASS — `Report FAILED: Cannot connect to the server. Start server.py first.`; no file created.
-- report_helper with invalid output path: PASS — `Report FAILED: could not write file ([Errno 2] ...)`.
-- GUI smoke (live server, temp DB): late=Yes + Social Hangout -> 2 rows, `Found 2 matching spot(s).`; Drive-Thru -> 0 rows, `No matching spots found. Try different choices.`; Reset -> 6 rows, dropdowns back to Any: PASS.
-- Manual GUI check of the Find My Spot Now panel: **pending user run**.
+## 3. Tests Passed (Phase 5, .venv Python 3.14.7 / Flask 3.1.3)
+- Static audit (AST script): no non-literal SQL in `execute()`; all `urlopen` calls have `timeout=5`; except order is HTTPError → socket.timeout → URLError in `gui_app.py` and `report_helper.py`; no comprehensions/lambdas; only `@app.route` decorators; no `sqlite3` in `gui_app.py`; `__main__` guards on all executable files: PASS.
+- `python -m py_compile` (all 5 files): PASS.
+- `python tests/test_store.py`: PASS (7 tests).
+- `python tests/test_api.py`: PASS (6 tests).
+- End-to-end script against the real `server.py` process in a fresh folder copy: fresh start, CRUD changes only the chosen record, persistence after restart, empty list (and no re-seed on restart), two-window 404 with stale row removed, deselect-then-delete warning, connection failure + recovery, report helper running / stopped / empty DB: ALL PASS.
+- Throwaway audit and e2e scripts were deleted after the run (they were kept outside the repo).
 
 ---
 
 ## 4. Known Issues / Pending Edits
-- Panel widgets are named `spot_late_combo`, `spot_vibe_combo`, `spot_style_combo`, `find_spot_button`, `reset_spot_button` because the guide's `open_late_combo` / `vibe_combo` / `style_combo` names are already used by the form panel.
-- Phase 4 not yet committed by the user.
+- README "Student" name is a placeholder `[Your Name]`; the user should fill it in.
+- `shop_store.py` has no `__main__` guard; it is a module, not an executable file.
+- Find My Spot Now widgets use the `spot_` prefix because the form already uses `open_late_combo`, `vibe_combo`, `style_combo`.
 
 ---
 
 ## 5. Exact Next Step for Incoming Agent
-Start **Phase 5**: run the 7 end-to-end rubric checks (fresh folder start, add/view/edit/delete only chosen record, persistence after restarting Flask + Tkinter, empty list, unknown ID with two windows -> 404, connection failure and recovery, report helper) and write `README.md` (summary, Find My Spot Now explanation, setup commands, Course Topic Evidence Table of 8 topics, recorded test results, credits + AI disclosure).
+Start **Phase 6**: create `CODE_TRACE_CHEATSHEET.md` (full Add Shop trace Tkinter → urlencode/urlopen → Flask request.form → ShopStore.add_shop → SQLite → JSON → Treeview refresh, plus exact line numbers for likely live edits: a label, rating max 5 → 10 in `validate_shop_form` and the GUI label, adding a region to `REGIONS`, an error message text, the report filename `REPORT_PATH`), then `SLIDES_OUTLINE.md` (10-minute plan), then list the exact files for `Project_452048033.zip`.
