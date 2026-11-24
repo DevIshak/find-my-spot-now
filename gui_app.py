@@ -103,7 +103,7 @@ class CoffeeGuideWindow(tk.Tk):
 
         # banner at the top
         style.configure(
-            'Banner.TLabel', background=ESPRESSO, foreground=CREAM, font=(FONT_NAME, 13, 'bold')
+            'Banner.TLabel', background=ESPRESSO, foreground=CREAM, font=(FONT_NAME, 16, 'bold')
         )
 
         # normal buttons
@@ -140,13 +140,13 @@ class CoffeeGuideWindow(tk.Tk):
             self, text='Saudi Coffee Shop Guide \u2014 Late-Night & Vibe Finder',
             style='Banner.TLabel', anchor='center'
         )
-        self.banner_label.grid(row=0, column=0, sticky='ew', ipady=6)
+        self.banner_label.grid(row=0, column=0, sticky='ew', ipady=8)
 
     # build the form panel
     def build_form_panel(self):
         # the frame that holds the form
         form_frame = ttk.LabelFrame(self, text='Coffee Shop Details')
-        form_frame.grid(row=1, column=0, padx=10, pady=10, sticky='ew')
+        form_frame.grid(row=1, column=0, padx=10, pady=(12, 6), sticky='ew')
 
         # name field
         ttk.Label(form_frame, text='Name:').grid(row=0, column=0, padx=5, pady=5, sticky='w')
@@ -154,7 +154,7 @@ class CoffeeGuideWindow(tk.Tk):
         self.name_entry.grid(row=0, column=1, padx=5, pady=5)
 
         # region dropdown
-        ttk.Label(form_frame, text='Region:').grid(row=0, column=2, padx=5, pady=5, sticky='w')
+        ttk.Label(form_frame, text='Region:').grid(row=0, column=2, padx=(24, 5), pady=5, sticky='w')
         self.region_combo = ttk.Combobox(form_frame, values=REGIONS, state='readonly', width=20)
         self.region_combo.grid(row=0, column=3, padx=5, pady=5)
 
@@ -164,7 +164,7 @@ class CoffeeGuideWindow(tk.Tk):
         self.rating_entry.grid(row=1, column=1, padx=5, pady=5)
 
         # coffee style dropdown
-        ttk.Label(form_frame, text='Coffee Style:').grid(row=1, column=2, padx=5, pady=5, sticky='w')
+        ttk.Label(form_frame, text='Coffee Style:').grid(row=1, column=2, padx=(24, 5), pady=5, sticky='w')
         self.style_combo = ttk.Combobox(form_frame, values=STYLES, state='readonly', width=20)
         self.style_combo.grid(row=1, column=3, padx=5, pady=5)
 
@@ -174,7 +174,7 @@ class CoffeeGuideWindow(tk.Tk):
         self.vibe_combo.grid(row=2, column=1, padx=5, pady=5)
 
         # open late dropdown
-        ttk.Label(form_frame, text='Open Late:').grid(row=2, column=2, padx=5, pady=5, sticky='w')
+        ttk.Label(form_frame, text='Open Late:').grid(row=2, column=2, padx=(24, 5), pady=5, sticky='w')
         self.open_late_combo = ttk.Combobox(form_frame, values=OPEN_LATE_CHOICES, state='readonly', width=20)
         self.open_late_combo.grid(row=2, column=3, padx=5, pady=5)
 
@@ -193,29 +193,29 @@ class CoffeeGuideWindow(tk.Tk):
         self.add_button = ttk.Button(
             button_frame, text='Add Shop', style='Accent.TButton', command=self.add_shop
         )
-        self.add_button.grid(row=0, column=0, padx=5, pady=5)
+        self.add_button.grid(row=0, column=0, padx=8, pady=5)
 
         # edit button
         self.edit_button = ttk.Button(button_frame, text='Update Selected', command=self.edit_shop)
-        self.edit_button.grid(row=0, column=1, padx=5, pady=5)
+        self.edit_button.grid(row=0, column=1, padx=8, pady=5)
 
         # delete button
         self.delete_button = ttk.Button(button_frame, text='Delete Selected', command=self.delete_shop)
-        self.delete_button.grid(row=0, column=2, padx=5, pady=5)
+        self.delete_button.grid(row=0, column=2, padx=8, pady=5)
 
         # clear button
         self.clear_button = ttk.Button(button_frame, text='Clear Form', command=self.clear_form)
-        self.clear_button.grid(row=0, column=3, padx=5, pady=5)
+        self.clear_button.grid(row=0, column=3, padx=8, pady=5)
 
         # refresh button
         self.refresh_button = ttk.Button(button_frame, text='Refresh List', command=self.refresh_shops)
-        self.refresh_button.grid(row=0, column=4, padx=5, pady=5)
+        self.refresh_button.grid(row=0, column=4, padx=8, pady=5)
 
     # build the filter bar
     def build_filter_bar(self):
         # the frame that holds the filters
         filter_frame = ttk.LabelFrame(self, text='Filter')
-        filter_frame.grid(row=3, column=0, padx=10, pady=5, sticky='ew')
+        filter_frame.grid(row=3, column=0, padx=10, pady=8, sticky='ew')
 
         # region filter
         ttk.Label(filter_frame, text='Region:').grid(row=0, column=0, padx=5, pady=5)
@@ -235,17 +235,17 @@ class CoffeeGuideWindow(tk.Tk):
 
         # apply filter button
         self.apply_filter_button = ttk.Button(filter_frame, text='Apply Filter', command=self.refresh_shops)
-        self.apply_filter_button.grid(row=0, column=4, padx=5, pady=5)
+        self.apply_filter_button.grid(row=0, column=4, padx=(14, 6), pady=5)
 
         # show all button
         self.show_all_button = ttk.Button(filter_frame, text='Show All', command=self.show_all)
-        self.show_all_button.grid(row=0, column=5, padx=5, pady=5)
+        self.show_all_button.grid(row=0, column=5, padx=8, pady=5)
 
     # build the Find My Spot Now panel
     def build_find_spot_panel(self):
         # the frame that holds the panel
         spot_frame = ttk.LabelFrame(self, text='Find My Spot Now')
-        spot_frame.grid(row=4, column=0, padx=10, pady=5, sticky='ew')
+        spot_frame.grid(row=4, column=0, padx=10, pady=8, sticky='ew')
 
         # late night dropdown
         ttk.Label(spot_frame, text='Late Night:').grid(row=0, column=0, padx=5, pady=5)
@@ -275,17 +275,17 @@ class CoffeeGuideWindow(tk.Tk):
         self.find_spot_button = ttk.Button(
             spot_frame, text='Find My Spot Now', style='Accent.TButton', command=self.find_spot_now
         )
-        self.find_spot_button.grid(row=0, column=6, padx=5, pady=5)
+        self.find_spot_button.grid(row=0, column=6, padx=(14, 6), pady=5)
 
         # reset button
         self.reset_spot_button = ttk.Button(spot_frame, text='Reset', command=self.reset_spot)
-        self.reset_spot_button.grid(row=0, column=7, padx=5, pady=5)
+        self.reset_spot_button.grid(row=0, column=7, padx=8, pady=5)
 
     # build the table with a scrollbar
     def build_table(self):
         # the frame that holds the table
         table_frame = ttk.Frame(self)
-        table_frame.grid(row=5, column=0, padx=10, pady=5, sticky='nsew')
+        table_frame.grid(row=5, column=0, padx=10, pady=8, sticky='nsew')
         self.rowconfigure(5, weight=1)
         self.columnconfigure(0, weight=1)
 
@@ -295,11 +295,15 @@ class CoffeeGuideWindow(tk.Tk):
 
         # column headings and widths
         headings = ['ID', 'Name', 'Region', 'Rating', 'Coffee Style', 'Seating Vibe', 'Open Late', 'Notes']
-        widths = [40, 180, 110, 60, 120, 110, 70, 250]
+        widths = [32, 165, 95, 50, 120, 110, 65, 315]
         for index in range(len(columns)):
             # set one column
             self.shops_table.heading(columns[index], text=headings[index])
-            self.shops_table.column(columns[index], width=widths[index])
+            # center the short columns, left-align the rest
+            column_anchor = 'w'
+            if columns[index] in ('id', 'rating', 'open_late'):
+                column_anchor = 'center'
+            self.shops_table.column(columns[index], width=widths[index], anchor=column_anchor)
 
         # scrollbar for the table
         scrollbar = ttk.Scrollbar(table_frame, orient='vertical', command=self.shops_table.yview)

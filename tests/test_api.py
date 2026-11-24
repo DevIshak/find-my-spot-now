@@ -110,7 +110,7 @@ class TestFlaskApi(unittest.TestCase):
         status, filtered = call_api('/shops?' + query)
         self.assertEqual(status, 200)
         self.assertEqual(filtered['count'], 1)
-        self.assertEqual(filtered['shops'][0]['name'], 'Elixir Bunn Coffee Roasters')
+        self.assertEqual(filtered['shops'][0]['name'], 'Elixir Bunn')
 
     # test POST /shops/add with valid fields returns 200 and saved shop
     def test_add_shop_valid(self):
@@ -238,7 +238,7 @@ class TestFlaskApi(unittest.TestCase):
             # add each shop name to the list
             names.append(shop['name'])
         self.assertIn('Brew92', names)
-        self.assertIn('Black Knight Coffee', names)
+        self.assertIn('Black Knight', names)
 
         # search for a combination with no matching spots
         empty_query = urlencode({

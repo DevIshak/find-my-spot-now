@@ -5,7 +5,7 @@ import sqlite3
 # default saudi coffee shop records for initial seeding
 SAMPLE_SHOPS = [
     (
-        'Elixir Bunn Coffee Roasters',
+        'Elixir Bunn',
         'Riyadh',
         5,
         'V60 / Specialty',
@@ -23,7 +23,7 @@ SAMPLE_SHOPS = [
         'Specialty roastery with lively late-night vibe'
     ),
     (
-        'Quba Heritage Qahwa',
+        'Kiffa',
         'Madinah',
         5,
         'Saudi Qahwa',
@@ -32,7 +32,7 @@ SAMPLE_SHOPS = [
         'Traditional cardamom qahwa and Ajwa dates'
     ),
     (
-        'Black Knight Coffee',
+        'Black Knight',
         'Eastern Province',
         4,
         'Espresso & Dessert',
@@ -41,7 +41,7 @@ SAMPLE_SHOPS = [
         'Popular Spanish latte and cheesecake in Khobar'
     ),
     (
-        'Maraya Desert Brew',
+        'Minzal',
         'AlUla',
         4,
         'Saudi Qahwa',
@@ -50,7 +50,7 @@ SAMPLE_SHOPS = [
         'Scenic sunset seating with local roast'
     ),
     (
-        'Abha Mist Roasters',
+        'Veranda',
         'Asir',
         4,
         'Espresso & Dessert',

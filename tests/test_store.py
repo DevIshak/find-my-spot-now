@@ -142,7 +142,7 @@ class TestShopStore(unittest.TestCase):
         # filter by region Riyadh
         riyadh_shops = self.store.filter_shops(region='Riyadh')
         self.assertEqual(len(riyadh_shops), 1)
-        self.assertEqual(riyadh_shops[0]['name'], 'Elixir Bunn Coffee Roasters')
+        self.assertEqual(riyadh_shops[0]['name'], 'Elixir Bunn')
 
         # filter by minimum rating 5
         top_shops = self.store.filter_shops(min_rating=5)
@@ -164,7 +164,7 @@ class TestShopStore(unittest.TestCase):
             coffee_style='V60 / Specialty'
         )
         self.assertEqual(len(quiet_late), 1)
-        self.assertEqual(quiet_late[0]['name'], 'Elixir Bunn Coffee Roasters')
+        self.assertEqual(quiet_late[0]['name'], 'Elixir Bunn')
 
         # find all late-night spots regardless of vibe or style
         all_late = self.store.find_spot_now(open_late='Yes', seating_vibe='All', coffee_style='All')
