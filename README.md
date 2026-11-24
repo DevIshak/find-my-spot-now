@@ -131,4 +131,4 @@ CRUD through the buttons, empty input error, invalid rating error, Yes/No delete
 - **Student:** Mohamed Ishak Mohamed Ifthikar — Student ID 452048033
 - **Course:** Advanced Programming 462 — Dr. Majed Hariri
 - **Sample data:** The coffee shop names and notes are illustrative sample data for demonstration.
-- **AI assistance:** I used AI coding assistants (Google Antigravity agent, running Gemini and Claude models) to generate code drafts, tests and documentation, phase by phase, following my own `AGENT_GUIDE.md` specification. I reviewed every phase, ran the tests, did the manual GUI checks, and approved and committed each phase myself. I can explain every core line of the code.
+- **AI assistance:** I used AI coding assistants (Google Antigravity agent, running Gemini and Claude models) to generate code drafts, tests and documentation, phase by phase, following my own phased specification. I reviewed every phase, ran the tests, did the manual GUI checks, and approved and committed each phase myself. I can explain every core line of the code.

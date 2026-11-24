@@ -3,3 +3,9 @@ __pycache__/
 *.pyc
 coffee_shops_report.txt
 *.db
+
+AGENT_GUIDE.md
+PROGRESS_HANDOFF.md
+CODE_TRACE_CHEATSHEET.md
+SLIDES_OUTLINE.md
+Project_452048033.zip
